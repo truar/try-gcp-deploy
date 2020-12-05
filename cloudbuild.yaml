@@ -30,6 +30,19 @@ steps:
           --platform=managed --region=europe-west1 \
           --member="allUsers" --role="roles/run.invoker"
 
+  - id: 'build-front'
+    waitFor: [ '-' ]
+    name: node
+    entrypoint: yarn
+    dir: gcpfirebasefront
+    args: [ 'build' ]
+
+  - id: 'deploy-firebase'
+    waitFor: [ 'build-front' ]
+    name: gcr.io/$PROJECT_ID/firebase
+    args: [ 'deploy', '--project=$PROJECT_ID', '--only', 'hosting' ]
+    dir: gcpfirebasefront
+
 images:
   - 'gcr.io/$PROJECT_ID/gcp-cloudrun-back:$SHORT_SHA'
   - 'gcr.io/$PROJECT_ID/gcp-cloudrun-back:latest'
