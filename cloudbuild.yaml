@@ -30,8 +30,15 @@ steps:
           --platform=managed --region=europe-west1 \
           --member="allUsers" --role="roles/run.invoker"
 
+  - id: 'install-yarn'
+    waitFor: ['-']
+    name: node
+    entrypoint: yarn
+    dir: gcpfirebasefront
+    args: ['install', '--silent']
+
   - id: 'build-front'
-    waitFor: [ '-' ]
+    waitFor: [ 'install-yarn' ]
     name: node
     entrypoint: yarn
     dir: gcpfirebasefront
